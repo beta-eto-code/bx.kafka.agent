@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+
+use Bitrix\Main\Config\Option;
+use Bitrix\Main\Loader;
+use Bx\Kafka\Agent\Agent;
+
+define('NO_AGENT_CHECK', true);
+define('DisableEventsCheck', true);
+define('NO_KEEP_STATISTIC', true);
+define('NO_AGENT_STATISTIC', true);
+define('NOT_CHECK_PERMISSIONS', true);
+define('STOP_STATISTICS', true);
+
+$moduleId = 'bx.kafka.agent';
+if (file_exists(__DIR__ . '/vendor/autoload.php')) {
+    require_once __DIR__ . '/vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/local/develop/vendor/autoload.php')) {
+    require_once __DIR__ . '/local/develop/vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/local/vendor/autoload.php')) {
+    require_once __DIR__ . '/local/vendor/autoload.php';
+} elseif (file_exists(__DIR__ . "/local/modules/$moduleId/vendor/autoload.php")) {
+    require_once __DIR__ . "/local/modules/$moduleId/vendor/autoload.php";
+}
+
+$_SERVER["DOCUMENT_ROOT"] = __DIR__;
+require $_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php";
+
+Loader::includeModule($moduleId);
+
+$agent = Agent::initFromModuleOptions();
+$partition = (int) (Option::get($moduleId, 'partition', 0) ?: 0);
+$timeout = ((int) (Option::get($moduleId, 'timeout', 0) ?: 0)) * 1000;
+$interval = (int) (Option::get($moduleId, 'interval', 0) ?: 0);
+while (true) {
+    $agent->execute([
+        'partition' => $partition,
+        'timeout' => $timeout
+    ]);
+    sleep($interval);
+}
