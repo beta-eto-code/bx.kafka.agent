@@ -60,11 +60,20 @@ class bx_kafka_agent extends CModule
 
     public function InstallFiles(): bool
     {
+        CopyDirFiles(__DIR__ . "/files", $_SERVER["DOCUMENT_ROOT"]);
+        $documentRoot = $_SERVER['DOCUMENT_ROOT'];
+        $serviceFilePath = $documentRoot . '/kfagent.service';
+        $serviceContent = strtr(
+            file_get_contents($serviceFilePath),
+            ['{$documentRoot}' => $documentRoot]
+        );
+        file_put_contents($serviceFilePath, $serviceContent);
         return true;
     }
 
     public function UnInstallFiles(): bool
     {
+        DeleteDirFiles(__DIR__ . "/files", $_SERVER["DOCUMENT_ROOT"]);
         return true;
     }
 }

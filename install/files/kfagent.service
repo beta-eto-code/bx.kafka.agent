@@ -1,0 +1,10 @@
+[Unit]
+Description=Bitrix Kafka agent
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/php {$documentRoot}/kfagent
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

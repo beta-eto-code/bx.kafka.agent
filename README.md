@@ -6,6 +6,37 @@
 composer require beta/bx.kafka.agent
 ```
 
+Далее устанавливаем модуль (bx.kafka.agent) через админку - /bitrix/admin/partner_modules.php?lang=ru
+
+После установки в корне проекта появится 2 файла:
+
+* kfagent - скрипт для запуска проекта
+* kfagent.service - сервис для подсистемы systemd
+
+Далее переносим сервис для запуска:
+
+```shell
+mv kfagent.service /etc/systemd/system/
+```
+
+Перезапускаем конфигурацию systemd:
+
+```shell
+sudo systemctl daemon-reload
+```
+
+Активируем сервис:
+
+```shell
+sudo systemctl enable kfagent 
+```
+
+И запускаем его:
+
+```shell
+sudo systemctl start kfagent
+```
+
 ## Пример регистрации через bitrix обработчики:
 
 ```php
