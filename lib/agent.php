@@ -36,38 +36,7 @@ class Agent
      */
     private static function createKafkaClientFromModuleOptions(): ClientInterface
     {
-        $moduleId = static::MODULE_ID;
-        $consumerConfig = new Conf();
-        $groupId = Option::get($moduleId, 'groupId');
-        if (empty($groupId)) {
-            throw new Exception('Не указан идентификатор группы (consumer group)');
-        }
-        $consumerConfig->set('group.id', $groupId);
-        $consumerConfig->set('enable.partition.eof', 'true');
-
-        $login = Option::get($moduleId, 'login');
-        $password = Option::get($moduleId, 'password');
-        if (!empty($login)) {
-            $consumerConfig->set('sasl.username', $login);
-            $consumerConfig->set('sasl.password', $password);
-            $consumerConfig->set('security.protocol', 'sasl_ssl');
-            $consumerConfig->set('sasl.mechanism', 'PLAIN');
-        }
-
-
-        $consumer = new Consumer($consumerConfig);
-        $servers = Option::get($moduleId, 'servers');
-        if (empty($servers)) {
-            throw new Exception('Не указаны адреса серверов');
-        }
-        $consumer->addBrokers($servers);
-
-        $topicConfig = new TopicConf();
-        $topicConfig->set('auto.commit.interval.ms', 100);
-        $topicConfig->set('offset.store.method', 'broker');
-        $topicConfig->set('auto.offset.reset', 'earliest');
-
-        return Client::initAsConsumer($consumer, $topicConfig);
+        return Factory::createConsumerClient();
     }
 
     public function __construct(EventManager $eventManager, ClientInterface $client, ManagerInterface $manager)

@@ -16,7 +16,7 @@ class Manager implements ManagerInterface
     /**
      * @var array<string, TopicConfig[]>
      */
-    private array $topicConfigList;
+    private array $topicConfigList = [];
     /**
      * @var SplSubject[]
      */
