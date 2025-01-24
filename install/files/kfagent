@@ -32,10 +32,18 @@ $agent = Agent::initFromModuleOptions();
 $partition = (int) (Option::get($moduleId, 'partition', 0) ?: 0);
 $timeout = ((int) (Option::get($moduleId, 'timeout', 0) ?: 0)) * 1000;
 $interval = (int) (Option::get($moduleId, 'interval', 0) ?: 0);
+
+Loader::includeModule('bx.logger');
+$logger = new SimpleTextLogger('kfagent.log');
 while (true) {
-    $agent->execute([
-        'partition' => $partition,
-        'timeout' => $timeout
-    ]);
+    try {
+        $logger->info('Try read message');
+        $agent->execute([
+            'partition' => $partition,
+            'timeout' => $timeout
+        ]);
+    } catch (Throwable $e) {
+        $logger->error($e);
+    }
     sleep($interval);
 }

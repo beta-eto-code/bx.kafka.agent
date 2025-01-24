@@ -63,6 +63,10 @@ class Manager implements ManagerInterface
 
     public function addObserver(string $topic, SplObserver $observer): void
     {
+        if ($observer instanceof BaseObserver) {
+            ExtOptions::getInstance()->registerObserver(get_class($observer));
+        }
+
         $this->getOrCreateTopicSubject($topic)->attach($observer);
     }
 

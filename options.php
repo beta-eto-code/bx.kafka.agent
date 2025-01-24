@@ -10,8 +10,10 @@ if(!$USER->IsAdmin()) {
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Config\Option;
+use Bx\Kafka\Agent\ExtOptions;
 
 $mid = 'bx.kafka.agent';
+
 
 Loc::loadMessages(__FILE__);
 Loader::includeModule($mid);
@@ -41,6 +43,9 @@ $options = [
         ],
     ],
 ];
+
+$extOptions = ExtOptions::getInstance();
+$options = array_merge($options, $extOptions->getOptions());
 
 $optionsRng = [];
 $optionsKv = [];
